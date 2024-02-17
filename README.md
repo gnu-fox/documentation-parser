@@ -4,7 +4,7 @@ This package contains the necesary models for parsing documentation concurrently
 
 ### Write your own handlers:
 
-'''
+```python
 from src.model.models import Folder
 from src.model.events import Command
 from src.model.messagebus import Handler
@@ -20,12 +20,11 @@ class Load(Handler[Command]):
 
         for file in self.folder:
             file.events.append(Event(type = 'some-event-type', payload = { 'some' : 'payload }))
-
-'''
+```
 
 ### Inject them into the task mannager and start it:
 
-'''
+```python
 from src.model.events import Command
 from src.model.messagebus import DirectoryManager
 
@@ -37,24 +36,24 @@ async def main():
     ...
 
     await messagebus.handle(Command(type='start-file-processing', payload={'path': './'}))
-'''
+```
 
 It will automatically start to handle events and commands in parallel thanks to asyncio:
 
-'''
+
+```
 14:11:29 [INFO] Starting processing of folder ./
-14:11:29 [INFO] readme file detected ./.pytest_cache/README.md
 14:11:29 [INFO] function detected in file test_tree
 14:11:29 [INFO] async function detected in file test_directory_mannager
 14:11:29 [INFO] function detected in file models
 14:11:29 [INFO] class detected in file events
 14:11:29 [INFO] async function detected in file messagebus
 14:11:29 [INFO] readme file detected ./README.md
-'''
+```
 
 Files also collects events so you can manage them individually using the 'FileManager' class, in for example exposing an api:
 
-'''
+```python
 from fastapi import FastAPI
 from fastapi import APIRouter
 from fastapi import Depends
@@ -74,7 +73,7 @@ class DocumentProcessor:
 
     async def upload_file(self, file: UploadFile):
         ...
-'''
+```
 
 ##TODO list:
 * Add infrastructure code
