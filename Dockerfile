@@ -18,4 +18,3 @@ RUN poetry install
 
 COPY . /app
 CMD [ "poetry", "run", "pytest"]
-

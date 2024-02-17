@@ -3,8 +3,8 @@ import os
 import logging
 from uuid import uuid4
 
-from src.models import Folder
-from src.models import File
+from src.model.models import Folder
+from src.model.models import File
 
 #mock adapter for development
 
@@ -31,6 +31,7 @@ def load_from_data_dir(folder : Folder):
 
 
 def test_mock_project():
+    logging.basicConfig(level=logging.INFO)
     root=Folder(path='./', name='root')
     load_from_data_dir(root)
     

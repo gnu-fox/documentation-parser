@@ -10,21 +10,25 @@ from collections import deque
 from pydantic import BaseModel
 from pydantic import Field
 from pydantic import ConfigDict
+from pydantic.dataclasses import dataclass
 from pydantic_settings import BaseSettings
 
-from src.events import Event
+from src.model.events import Event
 
 class Content(BaseModel):
     raw : str
 
-class File(BaseModel):
+@dataclass
+class File:
     path : str
     name : str
     extension : str
-    content : str
+    content : Union[str, Content]
     events : Deque[Event] = deque()
 
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+    def collect_events(self) -> Generator[Event, None, None]:
+        while self.events:
+            yield self.events.popleft()
 
     def __eq__(self, __value: object) -> bool:
         if isinstance(__value, File):
@@ -59,11 +63,9 @@ class Folder:
                 return child.get(path)
         return None
 
-    @property
-    def events(self) -> Generator[Event, None, None]:
+    def collect_events(self) -> Generator[Event, None, None]:
         for file in self.collection:
-            while file.events:
-                yield file.events.popleft()
+            yield from file.collect_events()
 
     def print(self, indent=''):
         for child in self.children:

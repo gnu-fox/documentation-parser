@@ -5,15 +5,12 @@ import asyncio
 
 from uuid import uuid4
 
-from src.events import Event, Command
-from src.models import Folder, File
-from src.handlers import Handler
-from src.messagebus import Messagebus
+from src.model.events import Event, Command
+from src.model.models import Folder, File
+from src.model.messagebus import Handler, DirectoryManager
 
 SUPPORTED_EXTENSIONS = ['.py', '.md']
-
 CREATED_EVENTS = []
-
 
 def load_from_data_dir(folder : Folder):
     items = os.listdir(folder.path)
@@ -106,13 +103,11 @@ class ClassDetected(Handler[Event]):
 @pytest.mark.asyncio
 async def test_messagebus():
     root=Folder(path='./', name='root')
-    messagebus = Messagebus(root)
-    messagebus.publishers['start-project-processing'] = StartFileProcessing(root)
+    messagebus = DirectoryManager(root)
+    messagebus.publishers['start-file-processing'] = StartFileProcessing(root)
     messagebus.consumers['readme-detected'] = [ReadmeFileDetected(None)]
     messagebus.consumers['function-detected'] = [FunctionDectected(None)]
     messagebus.consumers['async-function-detected'] = [AsyncFunctionDectected(None)]
     messagebus.consumers['class-detected'] = [ClassDetected(None)]
-
-
-    await messagebus.handle(Command(type='start-project-processing', payload={'path': './'}))
+    await messagebus.handle(Command(type='start-file-processing', payload={'path': './'}))
 
