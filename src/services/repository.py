@@ -6,6 +6,9 @@ from src.domain.events import Event
 from src.domain.models import Project
 
 class Repository:
+    '''
+    In memory repository responsible for collecting events for the messagebus.
+    '''
     
     def __init__(self, collection : Set[Project] = set()):
         self.collection : Set[Project] = collection
@@ -27,8 +30,3 @@ class Repository:
         for project in self.collection:
             while project.events:
                 yield project.events.popleft()
-
-
-
-
-

@@ -29,15 +29,17 @@ def load_from_data_dir(folder : Folder):
                 child = File(name = name, path = path, extension = extension, content = content)
                 folder.children.append(child)
 
+
+@pytest.fixture
 def mock_project() -> Project:
     project = Project(id = uuid4(), root=Folder(path='./', name='root'))
     load_from_data_dir(project.root)
     return project
 
-def test_mock_project():
+def test_mock_project(mock_project : Project):
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-    project = mock_project()
+    project = mock_project
 
     assert project.id
     
@@ -46,4 +48,4 @@ def test_mock_project():
         logging.info(f"Loaded file: {file.name}")
 
     print("Project structure of the current project:")
-    project.root.print()
+    project.print()

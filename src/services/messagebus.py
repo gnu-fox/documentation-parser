@@ -45,8 +45,3 @@ class Messagebus:
         except Exception:
             print(f"Exception handling command {command}")
             raise
-
-    async def start(self):
-        while True:
-            message = self.queue.popleft()
-            await self.handle(message)

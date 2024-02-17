@@ -9,6 +9,7 @@ from collections import deque
 
 from pydantic import BaseModel
 from pydantic import Field
+from pydantic_settings import BaseSettings
 
 from src.domain.events import Event
 
@@ -22,6 +23,12 @@ class File(BaseModel):
     content : str
 
 class Folder:
+    '''
+    Entity that represents a folder in the file system using a tree structure.
+    The identity of the folder is the path to the folder.
+    
+    '''
+
     def __init__(self, path : str, name : str):
         self.path = path
         self.name = name
@@ -47,6 +54,13 @@ class Folder:
 
 
 class Project:
+    '''
+    Aggregate root that represents a project in the file system.
+    The aggregate root is the entry point to the domain model and is responsible for enforcing invariants,
+    and dispatching events to the message bus.
+
+    '''
+
     def __init__(self, id : UUID, root : Folder):
         self.id = id
         self.root = root
@@ -54,4 +68,5 @@ class Project:
 
         self.events : Deque[Event] = deque()
 
-    
+    def print(self):
+        self.root.print()
