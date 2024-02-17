@@ -3,9 +3,8 @@ import os
 import logging
 from uuid import uuid4
 
-from src.domain.models import Folder
-from src.domain.models import File
-from src.domain.models import Project
+from src.models import Folder
+from src.models import File
 
 #mock adapter for development
 
@@ -30,22 +29,15 @@ def load_from_data_dir(folder : Folder):
                 folder.children.append(child)
 
 
-@pytest.fixture
-def mock_project() -> Project:
-    project = Project(id = uuid4(), root=Folder(path='./', name='root'))
-    load_from_data_dir(project.root)
-    return project
 
-def test_mock_project(mock_project : Project):
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-    project = mock_project
-
-    assert project.id
+def test_mock_project():
+    root=Folder(path='./', name='root')
+    load_from_data_dir(root)
     
-    for file in project.files:
+
+    for file in root.files:
         assert file.extension in SUPPORTED_EXTENSIONS
         logging.info(f"Loaded file: {file.name}")
 
     print("Project structure of the current project:")
-    project.print()
+    root.print()

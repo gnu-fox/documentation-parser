@@ -3,7 +3,7 @@ from typing import Union
 from typing import TypeVar
 from typing import Generic
 
-from src.domain.events import Event, Command
+from src.events import Event, Command
 
 MSG = TypeVar('MSG', bound=Union[Event, Command])
 class Handler(ABC, Generic[MSG]):

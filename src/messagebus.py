@@ -3,13 +3,13 @@ from typing import Union
 from typing import Dict, List
 from collections import deque
 
-from src.domain.events import Event, Command
-from src.services.handlers import Handler
-from src.services.repository import Repository
+from src.events import Event, Command
+from src.handlers import Handler
+from src.models import Folder
 
 class Messagebus:
-    def __init__(self, repository : Repository):
-        self.repository = repository
+    def __init__(self, root : Folder):
+        self.root = root
         self.queue = deque()
         self.publishers : Dict[str, Handler[Command]] = {}
         self.consumers : Dict[str, List[Handler[Event]]] = {}
@@ -31,7 +31,7 @@ class Messagebus:
             try:
                 print(f"handling event {event} with handler {handler}")
                 await handler(event)
-                self.queue.extend(self.repository.events)
+                self.queue.extend(self.root.events)
             except Exception:
                 print(f"Exception handling event {event}")
                 continue
@@ -41,7 +41,7 @@ class Messagebus:
         try:
             handler = self.publishers[command.type]
             await handler(command)
-            self.queue.extend(self.repository.events)
+            self.queue.extend(self.root.events)
         except Exception:
             print(f"Exception handling command {command}")
             raise
