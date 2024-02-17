@@ -10,7 +10,3 @@ class Handler(ABC, Generic[MSG]):
     @abstractmethod
     async def __call__(self, message : MSG):
         ...
-
-
-
-
